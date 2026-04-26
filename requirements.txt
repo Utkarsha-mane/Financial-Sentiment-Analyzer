@@ -1,0 +1,28 @@
+# ── Core ML / Data ───────────────────────────────────────────
+scikit-learn==1.6.1
+pandas
+numpy
+scipy
+joblib
+
+# ── NLP ───────────────────────────────────────────────────────
+nltk
+
+# ── Image OCR ────────────────────────────────────────────────
+opencv-python
+pytesseract
+Pillow
+
+# ── News scraping ─────────────────────────────────────────────
+newspaper3k
+lxml
+lxml_html_clean
+beautifulsoup4
+requests
+
+# ── Visualisation ─────────────────────────────────────────────
+matplotlib
+
+# ── Groq API (via plain requests – no extra package needed) ───
+# requests is already listed above
+python-dotenv
