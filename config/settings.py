@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import pytesseract
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Users\UTKARSHA\Downloads\tesseract-ocr-w64-setup-5.5.0.20241111.exe"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 try:
     from dotenv import load_dotenv
@@ -16,7 +16,7 @@ except ImportError:
 # load local .env file if present
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if load_dotenv is not None:
-    load_dotenv(Path(BASE_DIR) / ".env")
+    load_dotenv(str(Path(BASE_DIR) / ".env"))
 
 # ── Groq API ─────────────────────────────────────────────────
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")   # set via env or paste here

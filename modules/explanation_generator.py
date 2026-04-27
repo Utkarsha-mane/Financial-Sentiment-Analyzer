@@ -59,8 +59,8 @@ def _groq_explanation(text: str, sentiment: str) -> str:
     Ask Groq to explain why the news is classified as the given sentiment.
     Returns the explanation string, or an error message on failure.
     """
-    if not GROQ_API_KEY:
-        return "(Groq API key not configured – LLM explanation unavailable.)"
+    if not GROQ_API_KEY or not GROQ_API_KEY.startswith("gsk_"):
+        return "(Groq API key not configured or invalid – LLM explanation unavailable.)"
 
     prompt = (
         f"The following financial news snippet has been classified as **{sentiment}** sentiment.\n\n"
