@@ -1,7 +1,5 @@
-# ============================================================
 # modules/explanation_generator.py
-# Rule-based explanation + optional Groq LLM explanation
-# ============================================================
+# Rule-based explanation 
 
 import json
 import requests
@@ -9,20 +7,16 @@ import requests
 from config.settings import GROQ_API_KEY, GROQ_MODEL
 
 
-# ── Rule-based ───────────────────────────────────────────────
+# Rule-based 
 
 def _rule_explanation(sentiment: str, pos_words: list, neg_words: list) -> str:
-    """
-    Build a human-readable sentence explaining the prediction
-    based purely on keyword matches.
-    """
+    # Build a human-readable sentence explaining the prediction based purely on keyword matches.
     parts = []
 
     if sentiment == "positive":
         if pos_words:
             words = ", ".join(f"'{w}'" for w in pos_words[:5])
             parts.append(f"The text contains positive financial indicators such as {words}.")
-        else:
             parts.append("The text has an overall positive financial tone.")
         if neg_words:
             words = ", ".join(f"'{w}'" for w in neg_words[:3])
@@ -32,7 +26,6 @@ def _rule_explanation(sentiment: str, pos_words: list, neg_words: list) -> str:
         if neg_words:
             words = ", ".join(f"'{w}'" for w in neg_words[:5])
             parts.append(f"The text contains negative financial indicators such as {words}.")
-        else:
             parts.append("The text has an overall negative financial tone.")
         if pos_words:
             words = ", ".join(f"'{w}'" for w in pos_words[:3])
@@ -43,24 +36,20 @@ def _rule_explanation(sentiment: str, pos_words: list, neg_words: list) -> str:
             pw = ", ".join(f"'{w}'" for w in pos_words[:3])
             nw = ", ".join(f"'{w}'" for w in neg_words[:3])
             parts.append(
-                f"The text shows balanced signals — positive terms ({pw or 'none'}) "
+                f"The text shows balanced signals - positive terms ({pw or 'none'}) "
                 f"and negative terms ({nw or 'none'}) roughly cancel each other out."
             )
-        else:
             parts.append("The text contains no strong positive or negative financial keywords, resulting in a neutral sentiment.")
 
     return " ".join(parts)
 
 
-# ── Groq LLM ─────────────────────────────────────────────────
+# Groq LLM 
 
 def _groq_explanation(text: str, sentiment: str) -> str:
-    """
-    Ask Groq to explain why the news is classified as the given sentiment.
-    Returns the explanation string, or an error message on failure.
-    """
+    # Ask Groq to explain why the news is classified as the given sentiment. Returns the explanation string, or an error message on failure.
     if not GROQ_API_KEY or not GROQ_API_KEY.startswith("gsk_"):
-        return "(Groq API key not configured or invalid – LLM explanation unavailable.)"
+        return "(Groq API key not configured or invalid LLM explanation is not available.)"
 
     prompt = (
         f"The following financial news snippet has been classified as **{sentiment}** sentiment.\n\n"
@@ -87,17 +76,23 @@ def _groq_explanation(text: str, sentiment: str) -> str:
             },
             timeout=15,
         )
+        response.raise_for_status()
         data = response.json()
         if "choices" in data and data["choices"]:
             return data["choices"][0]["message"]["content"].strip()
-        return f"(Groq error: {data.get('error', {}).get('message', 'Unknown error')})"
+        error_msg = data.get("error", {}).get("message", "Unknown error")
+        return f"(Groq error: {error_msg})"
+    except requests.exceptions.HTTPError as exc:
+        return f"(Groq API HTTP error: {exc.response.status_code} - {exc.response.text})"
     except requests.exceptions.Timeout:
-        return "(Groq API timed out – LLM explanation unavailable.)"
+        return "(Groq API timed out LLM explanation unavailable.)"
+    except requests.exceptions.ConnectionError:
+        return "(Groq API connection failed check your internet connection.)"
     except Exception as exc:
-        return f"(Groq API error: {exc})"
+        return f"(Groq API error: {str(exc)})"
 
 
-# ── Public entry point ────────────────────────────────────────
+# Public entry point
 
 def generate_explanation(
     text: str,
@@ -106,13 +101,7 @@ def generate_explanation(
     neg_words: list,
     use_groq: bool = True,
 ) -> tuple:
-    """
-    Generate both explanations and a combined summary.
-
-    Returns
-    -------
-    (rule_explanation, llm_explanation, combined_explanation)
-    """
+    
     rule_exp = _rule_explanation(sentiment, pos_words, neg_words)
     llm_exp  = _groq_explanation(text, sentiment) if use_groq else ""
 

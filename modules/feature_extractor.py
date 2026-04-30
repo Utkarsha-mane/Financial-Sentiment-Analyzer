@@ -1,38 +1,22 @@
-# ============================================================
 # modules/feature_extractor.py  –  Keyword-based feature computation
-# Produces the 4 extra columns appended after TF-IDF features.
-# ============================================================
+# Produces the 4 extra columns(pos_score, neg_score, keyword_strength, sentiment_ratio) appended after TF-IDF features (basically insight columns).
+
+#     pos_score        : count of positive keywords found in text
+#     neg_score        : count of negative keywords found in text
+#     keyword_strength : pos_score + neg_score  (total signal strength)
+#     sentiment_ratio  : pos_score / (neg_score + 1)  
 
 import json
 from typing import Dict
 
 
 def load_keywords(path: str) -> Dict:
-    """Load positive/negative keyword lists from JSON file."""
+    # Load positive/negative keyword lists from JSON file.
     with open(path, "r") as f:
         return json.load(f)
 
 
 def compute_keyword_features(text: str, keywords: Dict) -> Dict:
-    """
-    Compute four keyword-derived features for a piece of text.
-
-    Features
-    --------
-    pos_score        : count of positive keywords found in text
-    neg_score        : count of negative keywords found in text
-    keyword_strength : pos_score + neg_score  (total signal strength)
-    sentiment_ratio  : pos_score / (neg_score + 1)  (ratio, +1 avoids /0)
-
-    Parameters
-    ----------
-    text     : str  – cleaned (lower-cased) text
-    keywords : dict – {"positive": [...], "negative": [...]}
-
-    Returns
-    -------
-    dict with the four feature values
-    """
     tokens = set(text.lower().split())
 
     positive_words = keywords.get("positive", [])
@@ -54,13 +38,7 @@ def compute_keyword_features(text: str, keywords: Dict) -> Dict:
 
 
 def get_matched_keywords(text: str, keywords: Dict) -> Dict:
-    """
-    Return the actual matched keyword words (used for explanation).
-
-    Returns
-    -------
-    dict {"positive": [word, ...], "negative": [word, ...]}
-    """
+    # Return the actual matched keywords.
     tokens = set(text.lower().split())
     matched_pos = [w for w in keywords.get("positive", []) if w in tokens]
     matched_neg = [w for w in keywords.get("negative", []) if w in tokens]

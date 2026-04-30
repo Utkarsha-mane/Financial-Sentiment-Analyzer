@@ -1,6 +1,4 @@
-# ============================================================
 # modules/database_manager.py  –  SQLite persistence layer
-# ============================================================
 
 import sqlite3
 import datetime
@@ -14,7 +12,7 @@ def _get_connection():
 
 
 def init_db():
-    """Create the results table if it does not already exist."""
+    # Create the results table if it does not already exist.
     conn = _get_connection()
     conn.execute("""
         CREATE TABLE IF NOT EXISTS results (
@@ -38,7 +36,7 @@ def init_db():
 
 
 def save_result(result: dict, source_type: str = "text", raw_text: str = ""):
-    """Persist a single analysis result to the database."""
+    # Persist a single analysis result to the database.
     conn = _get_connection()
     conn.execute(
         """
@@ -68,7 +66,7 @@ def save_result(result: dict, source_type: str = "text", raw_text: str = ""):
 
 
 def fetch_all() -> list:
-    """Return all stored results as a list of dicts."""
+    # Return all stored results as a list of dicts.
     conn = _get_connection()
     rows = conn.execute(
         "SELECT * FROM results ORDER BY id DESC"
@@ -78,7 +76,7 @@ def fetch_all() -> list:
 
 
 def fetch_recent(n: int = 50) -> list:
-    """Return the n most recent results."""
+    # Return the n most recent results.
     conn = _get_connection()
     rows = conn.execute(
         "SELECT * FROM results ORDER BY id DESC LIMIT ?", (n,)
@@ -88,7 +86,7 @@ def fetch_recent(n: int = 50) -> list:
 
 
 def clear_db():
-    """Delete all records (useful for testing)."""
+    # Delete all records.
     conn = _get_connection()
     conn.execute("DELETE FROM results")
     conn.commit()

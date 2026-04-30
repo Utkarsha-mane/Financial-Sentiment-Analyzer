@@ -1,17 +1,15 @@
-# ============================================================
 # modules/url_processor.py  –  Extract article text from a URL
 # Primary: newspaper3k   |   Fallback: requests + BeautifulSoup
-# ============================================================
 
 import re
 import requests
 from config.settings import FINANCIAL_KEYWORDS
 
 
-# ── Primary extractor ─────────────────────────────────────────
+# Primary extractor 
 
 def _extract_via_newspaper(url: str) -> str:
-    """Use newspaper3k Article for clean article text."""
+    # Use newspaper3k Article for clean article text. Returns empty string on failure.
     try:
         from newspaper import Article
         article = Article(url)
@@ -22,13 +20,10 @@ def _extract_via_newspaper(url: str) -> str:
         return ""
 
 
-# ── Fallback extractor ────────────────────────────────────────
+# Fallback extractor 
 
 def _extract_via_bs4(url: str) -> str:
-    """
-    Fallback: fetch raw HTML with requests and strip tags
-    using BeautifulSoup.
-    """
+    # Fallback: fetch raw HTML with requests and strip tags using BeautifulSoup.
     try:
         from bs4 import BeautifulSoup
         headers = {
@@ -60,29 +55,18 @@ def _extract_via_bs4(url: str) -> str:
         return ""
 
 
-# ── Financial domain check ────────────────────────────────────
+# Financial domain check 
 
 def _is_financial_url_content(text: str) -> bool:
     lower = text.lower()
     return any(kw in lower for kw in FINANCIAL_KEYWORDS)
 
 
-# ── Public function ───────────────────────────────────────────
-
+# Main function 
 def extract_text_from_url(url: str) -> tuple:
-    """
-    Download and extract the main article text from a URL.
+    # Download and extract the main article text from a URL.
+    # Returns a tuple of (extracted_text, is_financial_boolean).
 
-    Parameters
-    ----------
-    url : str  – the news article URL
-
-    Returns
-    -------
-    (text: str, is_financial: bool)
-        text         – extracted article body (empty string on failure)
-        is_financial – True if the content appears to be financial news
-    """
     # Try newspaper3k first
     text = _extract_via_newspaper(url)
 

@@ -1,21 +1,19 @@
-# ============================================================
 # modules/analyzer.py  –  Core prediction pipeline
-# clean → TF-IDF → keyword features → combine → SVM predict
-# ============================================================
+# clean the input → TF-IDF mapping → keyword features calculations → combine and pass to the model → SVM predict
 
 import numpy as np
 from scipy import sparse
 
-from modules.preprocessor      import clean_text
+from modules.preprocessor import clean_text
 from modules.feature_extractor import compute_keyword_features, get_matched_keywords
-from modules.model_loader      import load_tfidf, load_svm, load_keywords
+from modules.model_loader import load_tfidf, load_svm, load_keywords
 from modules.explanation_generator import generate_explanation
-from config.settings           import FINANCIAL_KEYWORDS
+from config.settings import FINANCIAL_KEYWORDS
 
-# ── Labels ──────────────────────────────────────────────────
+# Labels 
 LABEL_MAP = {-1: "negative", 0: "neutral", 1: "positive"}
 
-# ── Lazy singletons – loaded once on first call ──────────────
+# loaded once on first call 
 _tfidf    = None
 _svm      = None
 _keywords = None
@@ -31,25 +29,16 @@ def _get_models():
 
 
 def is_financial(text: str) -> bool:
-    """
-    Lightweight heuristic: does the text contain at least one
-    financial keyword?  Returns True / False.
-    """
+    # Does the text contain at least one financial keyword?  Returns True / False.
     lower = text.lower()
     return any(kw in lower for kw in FINANCIAL_KEYWORDS)
 
 
 def analyze(raw_text: str, use_groq: bool = True) -> dict:
     """
-    Full analysis pipeline.
+    ANALYSIS PIPELINE
 
-    Parameters
-    ----------
-    raw_text : str   – unprocessed input text
-    use_groq : bool  – whether to call the Groq LLM for explanation
-
-    Returns
-    -------
+    Returns : 
     dict with keys:
         sentiment     : "positive" | "negative" | "neutral"
         label_code    : -1 | 0 | 1

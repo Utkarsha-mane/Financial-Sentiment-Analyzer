@@ -1,6 +1,4 @@
-# ============================================================
 # modules/model_loader.py  –  Load persisted model artefacts
-# ============================================================
 
 import os
 import json
@@ -20,7 +18,7 @@ def _rebuild_tfidf() -> TfidfVectorizer:
     Re-fit on the same training corpus so the vocabulary is consistent
     with what the SVM expects.
     """
-    print("[model_loader] Re-fitting TF-IDF on training corpus …")
+    print("[model_loader] Re-fitting TF-IDF ...")
     df = pd.read_csv(CSV_PATH).dropna(subset=["clean_news"])
 
     # Load the parameter template from the original (unfitted) pickle
@@ -38,14 +36,13 @@ def _rebuild_tfidf() -> TfidfVectorizer:
 
 
 def load_tfidf() -> TfidfVectorizer:
-    """Load the fitted TF-IDF vectoriser (rebuild if necessary)."""
+    # Load the fitted TF-IDF vectoriser (rebuild if necessary).
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        if os.path.exists(TFIDF_PATH):
+        if os.path.exists(TFIDF_PATH):        
             tfidf = joblib.load(TFIDF_PATH)
-            # Quick sanity check – is it actually fitted?
             try:
-                tfidf.transform(["test"])
+                tfidf.transform(["test"])        # Quick check
                 return tfidf
             except Exception:
                 pass
@@ -53,13 +50,13 @@ def load_tfidf() -> TfidfVectorizer:
 
 
 def load_svm():
-    """Load the trained LinearSVC model."""
+    # Load the trained LinearSVC model.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         return joblib.load(SVM_PATH)
 
 
 def load_keywords() -> dict:
-    """Load positive / negative keyword lists."""
+    # Load positive / negative keyword lists.
     with open(KEYWORDS_PATH, "r") as f:
         return json.load(f)

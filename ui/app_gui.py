@@ -1,6 +1,4 @@
-# ============================================================
 # ui/app_gui.py  –  Tkinter desktop GUI
-# ============================================================
 
 import os
 import sys
@@ -21,7 +19,7 @@ from modules.visualizer       import show_dashboard
 from config.settings          import GROQ_API_KEY
 
 
-# ── Colour / font constants ───────────────────────────────────
+# Colour / font constants 
 BG_DARK     = "#1a1a2e"
 BG_CARD     = "#16213e"
 BG_INPUT    = "#0f3460"
@@ -47,10 +45,10 @@ class FinancialSentimentApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        # ── DB init ───────────────────────────────────────────
+        # DB init 
         init_db()
 
-        # ── Window setup ──────────────────────────────────────
+        # Window setup 
         self.title("Financial News Sentiment Analyzer")
         self.geometry("1050x780")
         self.minsize(800, 600)
@@ -64,7 +62,7 @@ class FinancialSentimentApp(tk.Tk):
 
         self._build_ui()
 
-    # ── Layout helpers ────────────────────────────────────────
+    # Layout helpers 
 
     def _center_window(self):
         self.update_idletasks()
@@ -77,10 +75,10 @@ class FinancialSentimentApp(tk.Tk):
         """Styled frame acting as a 'card'."""
         return tk.Frame(parent, bg=BG_CARD, bd=0, **kw)
 
-    # ── Build UI ──────────────────────────────────────────────
+    # Build UI 
 
     def _build_ui(self):
-        # ── Title bar ─────────────────────────────────────────
+        # Title bar 
         title_bar = tk.Frame(self, bg=ACCENT_BLUE, height=60)
         title_bar.pack(fill="x")
         tk.Label(
@@ -90,14 +88,14 @@ class FinancialSentimentApp(tk.Tk):
         ).pack(side="left", padx=20, pady=10)
 
         # Groq toggle on the right
-        groq_frame = tk.Frame(title_bar, bg=ACCENT_BLUE)
-        groq_frame.pack(side="right", padx=20)
-        ttk.Checkbutton(
-            groq_frame, text="Use AI (Groq)",
-            variable=self._use_groq, style="TCheckbutton",
-        ).pack(side="left")
+        # groq_frame = tk.Frame(title_bar, bg=ACCENT_BLUE)
+        # groq_frame.pack(side="right", padx=20)
+        # ttk.Checkbutton(
+        #     groq_frame, text="Use AI (Groq)",
+        #     variable=self._use_groq, style="TCheckbutton",
+        # ).pack(side="left")
 
-        # ── Main paned layout ─────────────────────────────────
+        # Main paned layout 
         main = tk.Frame(self, bg=BG_DARK)
         main.pack(fill="both", expand=True, padx=12, pady=8)
 
@@ -113,11 +111,11 @@ class FinancialSentimentApp(tk.Tk):
         self._build_input_section(left)
         self._build_result_section(right)
 
-    # ── Left – Input section ──────────────────────────────────
+    # Left – Input section 
 
     def _build_input_section(self, parent):
 
-        # ── Tab control: Text / URL / Image ───────────────────
+        # Tab control: Text / URL / Image 
         style = ttk.Style()
         style.theme_use("default")
         style.configure("Custom.TNotebook",
@@ -132,7 +130,7 @@ class FinancialSentimentApp(tk.Tk):
         nb = ttk.Notebook(parent, style="Custom.TNotebook")
         nb.pack(fill="both", expand=True)
 
-        # ── Tab 1: Text ───────────────────────────────────────
+        # Tab 1: Text 
         t1 = self._card(nb)
         nb.add(t1, text="  ✍  Text  ")
 
@@ -155,7 +153,7 @@ class FinancialSentimentApp(tk.Tk):
                             lambda: self.text_input.delete("1.0", "end"),
                             secondary=True).pack(side="left", padx=(8, 0))
 
-        # ── Tab 2: URL ────────────────────────────────────────
+        # Tab 2: URL 
         t2 = self._card(nb)
         nb.add(t2, text="  🔗  URL  ")
 
@@ -176,8 +174,8 @@ class FinancialSentimentApp(tk.Tk):
 
         # Extracted preview
         tk.Label(t2, text="Extracted article preview:",
-                 font=FONT_HEADER, fg=TEXT_DIM, bg=BG_CARD).pack(
-                     anchor="w", padx=12, pady=(6, 2))
+                font=FONT_HEADER, fg=TEXT_DIM, bg=BG_CARD).pack(
+                    anchor="w", padx=12, pady=(6, 2))
         self.url_preview = scrolledtext.ScrolledText(
             t2, height=10, font=FONT_BODY,
             bg=BG_INPUT, fg=TEXT_LIGHT, relief="flat",
@@ -189,7 +187,7 @@ class FinancialSentimentApp(tk.Tk):
                             self._on_analyze_url).pack(
                                 anchor="w", padx=12, pady=(0, 10))
 
-        # ── Tab 3: Image ──────────────────────────────────────
+        # Tab 3: Image 
         t3 = self._card(nb)
         nb.add(t3, text="  🖼  Image  ")
 
@@ -211,8 +209,8 @@ class FinancialSentimentApp(tk.Tk):
 
         # OCR text preview
         tk.Label(t3, text="OCR extracted text:",
-                 font=FONT_HEADER, fg=TEXT_DIM, bg=BG_CARD).pack(
-                     anchor="w", padx=12, pady=(10, 2))
+                font=FONT_HEADER, fg=TEXT_DIM, bg=BG_CARD).pack(
+                    anchor="w", padx=12, pady=(10, 2))
         self.ocr_preview = scrolledtext.ScrolledText(
             t3, height=10, font=FONT_BODY,
             bg=BG_INPUT, fg=TEXT_LIGHT, relief="flat",
@@ -220,12 +218,12 @@ class FinancialSentimentApp(tk.Tk):
         )
         self.ocr_preview.pack(fill="both", expand=True, padx=12, pady=(0, 8))
 
-        # ── Bottom action buttons (always visible below tabs) ────
+        # Bottom action buttons (always visible below tabs) 
         bottom_row = tk.Frame(parent, bg=BG_DARK)
         bottom_row.pack(fill="x", padx=4, pady=(10, 4))
 
         self._styled_button(
-            bottom_row, "  📊 Show Charts / Dashboard  ",
+            bottom_row, "  📊 Show Dashboard  ",
             self._on_show_charts,
         ).pack(side="left")
 
@@ -247,14 +245,14 @@ class FinancialSentimentApp(tk.Tk):
         )
         self.save_btn.pack(side="left", padx=(10, 0))
 
-    # ── Right – Results section ───────────────────────────────
+    # Right – Results section 
 
     def _build_result_section(self, parent):
         tk.Label(parent, text="Analysis Result",
                  font=FONT_TITLE, fg=TEXT_LIGHT, bg=BG_DARK).pack(
                      anchor="w", pady=(4, 6))
 
-        # ── Sentiment badge ───────────────────────────────────
+        # Sentiment badge 
         badge_frame = self._card(parent)
         badge_frame.pack(fill="x", pady=(0, 6))
 
@@ -273,7 +271,7 @@ class FinancialSentimentApp(tk.Tk):
         )
         self.fin_label.pack(pady=(0, 8))
 
-        # ── Score card ────────────────────────────────────────
+        # Score card 
         score_card = self._card(parent)
         score_card.pack(fill="x", pady=(0, 6))
 
@@ -291,7 +289,7 @@ class FinancialSentimentApp(tk.Tk):
             tk.Label(row, textvariable=var, font=(FONT_HEADER[0], 10, "bold"),
                      fg=TEXT_LIGHT, bg=BG_CARD).pack(side="left")
 
-        # ── Keywords ──────────────────────────────────────────
+        # Keywords 
         kw_card = self._card(parent)
         kw_card.pack(fill="x", pady=(0, 6))
         tk.Label(kw_card, text="Matched Keywords",
@@ -304,7 +302,7 @@ class FinancialSentimentApp(tk.Tk):
         )
         self.kw_text.pack(fill="x", padx=12, pady=(0, 8))
 
-        # ── Explanation ───────────────────────────────────────
+        # Explanation
         exp_card = self._card(parent)
         exp_card.pack(fill="both", expand=True)
         tk.Label(exp_card, text="Explanation",
@@ -317,13 +315,13 @@ class FinancialSentimentApp(tk.Tk):
         )
         self.exp_text.pack(fill="both", expand=True, padx=12, pady=(0, 8))
 
-        # ── Status bar ────────────────────────────────────────
+        # Status bar 
         self.status_var = tk.StringVar(value="Ready.")
         tk.Label(parent, textvariable=self.status_var,
                  font=FONT_BODY, fg=TEXT_DIM, bg=BG_DARK).pack(
                      anchor="w", padx=4)
 
-    # ── Widget factory ────────────────────────────────────────
+    # Widget factory 
 
     def _styled_button(self, parent, text: str,
                        command, secondary=False) -> tk.Button:
@@ -338,7 +336,7 @@ class FinancialSentimentApp(tk.Tk):
         )
         return btn
 
-    # ── Handlers ──────────────────────────────────────────────
+    # Handlers 
 
     def _set_status(self, msg: str):
         self.status_var.set(msg)
@@ -349,7 +347,7 @@ class FinancialSentimentApp(tk.Tk):
         t = threading.Thread(target=fn, daemon=True)
         t.start()
 
-    # ── Analyze text ──────────────────────────────────────────
+    # Analyze text 
 
     def _on_analyze_text(self):
         if self._analyzing:
@@ -362,7 +360,7 @@ class FinancialSentimentApp(tk.Tk):
         self._set_status("Analyzing …")
         self._run_in_thread(lambda: self._do_analyze(text, "text"))
 
-    # ── Analyze URL ───────────────────────────────────────────
+    # Analyze URL 
 
     def _on_analyze_url(self):
         if self._analyzing:
@@ -393,7 +391,7 @@ class FinancialSentimentApp(tk.Tk):
             self.after(0, lambda: messagebox.showerror("Error", str(exc)))
             self._set_status("Error.")
 
-    # ── Browse image ──────────────────────────────────────────
+    # Browse image 
 
     def _on_browse_image(self):
         path = filedialog.askopenfilename(
@@ -433,7 +431,7 @@ class FinancialSentimentApp(tk.Tk):
             self.after(0, lambda: messagebox.showerror("Error", str(exc)))
             self._set_status("Error.")
 
-    # ── Core analysis ─────────────────────────────────────────
+    # Core analysis 
 
     def _do_analyze(self, text: str, source_type: str):
         self._analyzing = True
@@ -453,7 +451,7 @@ class FinancialSentimentApp(tk.Tk):
         finally:
             self._analyzing = False
 
-    # ── Display result ────────────────────────────────────────
+    # Display result 
 
     def _display_result(self, result: dict):
         sentiment = result.get("sentiment", "neutral")
@@ -488,9 +486,9 @@ class FinancialSentimentApp(tk.Tk):
         neg_kw = result.get("matched_negative", [])
         kw_str = ""
         if pos_kw:
-            kw_str += f"✅ Positive: {', '.join(pos_kw[:8])}\n"
+            kw_str += f"Positive: {', '.join(pos_kw[:8])}\n"
         if neg_kw:
-            kw_str += f"❌ Negative: {', '.join(neg_kw[:8])}"
+            kw_str += f"Negative: {', '.join(neg_kw[:8])}"
         if not kw_str:
             kw_str = "No strong keywords matched."
         self._set_text_widget(self.kw_text, kw_str)
@@ -503,7 +501,7 @@ class FinancialSentimentApp(tk.Tk):
         self.save_btn.config(state="normal")
         self._set_status(f"Done. Sentiment: {sentiment.upper()}")
 
-    # ── Save ──────────────────────────────────────────────────
+    # Save 
 
     def _on_save(self):
         if not self._last_result:
@@ -517,12 +515,12 @@ class FinancialSentimentApp(tk.Tk):
         self.save_btn.config(state="disabled")
         self._set_status("Saved to database.")
 
-    # ── Dashboard ─────────────────────────────────────────────
+    # Dashboard 
 
     def _on_show_charts(self):
         self._run_in_thread(show_dashboard)
 
-    # ── Helpers ───────────────────────────────────────────────
+    # Helpers 
 
     def _set_text_widget(self, widget, text: str):
         widget.config(state="normal")

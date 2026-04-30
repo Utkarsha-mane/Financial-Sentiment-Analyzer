@@ -1,6 +1,4 @@
-# ============================================================
 # modules/visualizer.py  –  Matplotlib charts for stored results
-# ============================================================
 
 import matplotlib
 matplotlib.use("TkAgg")          # must be set before pyplot import

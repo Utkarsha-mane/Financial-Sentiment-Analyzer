@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-# ============================================================
 # main.py  –  Application entry point
-# Run: python main.py
-# ============================================================
 
 import os
 import sys
